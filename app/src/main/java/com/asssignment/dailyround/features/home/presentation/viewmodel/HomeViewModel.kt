@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.asssignment.dailyround.features.home.domain.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -21,7 +19,7 @@ class HomeViewModel @Inject constructor(
         initialValue = 0,
     )
 
-    val longestStreak = homeRepository.getLongestWinningStreak().stateIn(
+    val longestStreak = homeRepository.getLongestStreak().stateIn(
         viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = 0,

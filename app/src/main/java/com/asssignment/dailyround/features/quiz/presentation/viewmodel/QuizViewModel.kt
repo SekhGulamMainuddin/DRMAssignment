@@ -121,8 +121,6 @@ class QuizViewModel @Inject constructor(
 
     fun submitAnswer(optionIndex: Int?, currentQuestionIndex: Int, question: QuizQuestion) =
         viewModelScope.launch(Dispatchers.IO) {
-            quizDialogUiState.value = QuizDialogUiState.QuizQuestionSubmitting
-
             val skippedList = quizResultEntity.skippedQuestions.toMutableList()
             val correctList = quizResultEntity.correctAnswered.toMutableList()
             val wrongList = quizResultEntity.wrongAnswered.toMutableList()
@@ -205,8 +203,10 @@ class QuizViewModel @Inject constructor(
         quizDialogUiState.value = QuizDialogUiState.ExitConfirmation
     }
 
-    fun exitQuiz() = viewModelScope.launch {
+    fun exitQuiz() = viewModelScope.launch(Dispatchers.IO) {
         quizDialogUiState.value = QuizDialogUiState.Hidden
+        quizUiState.value = QuizUiState.Loading
+        quizRepository.exitQuiz(quizResultEntity)
         quizDialogUiState.value = QuizDialogUiState.ExitScreen
     }
 

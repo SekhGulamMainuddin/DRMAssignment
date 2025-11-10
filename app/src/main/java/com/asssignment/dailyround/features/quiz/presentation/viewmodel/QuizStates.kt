@@ -26,7 +26,6 @@ sealed interface QuizDialogUiState {
     data class QuestionsLoaded(val questions: List<QuizQuestion>) : QuizDialogUiState
     data class QuizCompleted(val quizResult: QuizResultEntity) : QuizDialogUiState
     data class QuizQuestionSubmitError(val message: String) : QuizDialogUiState
-    data object QuizQuestionSubmitting : QuizDialogUiState
 }
 
 sealed interface QuestionsProgressState {

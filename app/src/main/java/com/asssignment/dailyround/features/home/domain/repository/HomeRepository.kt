@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
     fun getTotalNumberOfQuizzesTaken(): Flow<Int>
-    fun getLongestWinningStreak(): Flow<Int>
+    fun getLongestStreak(): Flow<Int>
     fun getLastQuizStreak(): Flow<Int>
     fun getLastQuizResult(): Flow<QuizResultEntity?>
 }

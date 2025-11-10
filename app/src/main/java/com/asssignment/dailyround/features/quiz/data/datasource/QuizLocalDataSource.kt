@@ -1,6 +1,7 @@
 package com.asssignment.dailyround.features.quiz.data.datasource
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,6 +15,9 @@ interface QuizLocalDataSource {
 
     @Update
     suspend fun update(quiz: QuizResultEntity)
+
+    @Delete
+    suspend fun delete(quiz: QuizResultEntity)
 
     @Query("select * from quizresultentity where id = :id limit 1")
     suspend fun getQuiz(id: String) : QuizResultEntity

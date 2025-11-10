@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         QuizScreen(navController, quizId)
                     }
                     composable(
-                        route = "results_screen?highestStreak={highestStreak}&correctAns={correctAns}&totalQuestions={totalQuestions}",
+                        route = NavigationHelper.ResultsRoute.routeName,
                         arguments = listOf(
                             navArgument("highestStreak") {
                                 type = NavType.IntType
@@ -68,18 +68,24 @@ class MainActivity : ComponentActivity() {
                             navArgument("totalQuestions") {
                                 type = NavType.IntType
                                 defaultValue = 0
-                            }
+                            },
+                            navArgument("skippedQuestions") {
+                                type = NavType.IntType
+                                defaultValue = 0
+                            },
                         )
                     ) { backStackEntry ->
                         val highestStreak = backStackEntry.arguments?.getInt("highestStreak") ?: 0
                         val correctAns = backStackEntry.arguments?.getInt("correctAns") ?: 0
                         val totalQuestions = backStackEntry.arguments?.getInt("totalQuestions") ?: 0
+                        val skippedQuestions = backStackEntry.arguments?.getInt("skippedQuestions") ?: 0
 
                         ResultsScreen(
                             navController = navController,
                             highestStreak = highestStreak,
                             correctAns = correctAns,
-                            totalQuestions = totalQuestions
+                            totalQuestions = totalQuestions,
+                            skippedQuestions = skippedQuestions
                         )
                     }
 

@@ -16,8 +16,8 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getTotalNumberOfQuizzesTaken(): Flow<Int> =
         localDataSource.getTotalNumberOfQuizzesTaken()
 
-    override fun getLongestWinningStreak(): Flow<Int> =
-        localDataSource.getLongestWinningStreak().map { it ?: 0 }
+    override fun getLongestStreak(): Flow<Int> =
+        localDataSource.getLongestStreak().map { it ?: 0 }
 
     override fun getLastQuizStreak(): Flow<Int> =
         localDataSource.getLastQuizStreak().map { it ?: 0 }

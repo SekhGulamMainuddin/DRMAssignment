@@ -8,4 +8,5 @@ interface QuizRepository {
     suspend fun createNewQuiz(quizResult: QuizResultEntity) : Result<Unit>
     suspend fun updateQuizResult(quizResult: QuizResultEntity) : Result<Unit>
     suspend fun loadPendingQuiz(id: String): Result<QuizResultEntity>
+    suspend fun exitQuiz(quizResult: QuizResultEntity) : Result<Unit>
 }

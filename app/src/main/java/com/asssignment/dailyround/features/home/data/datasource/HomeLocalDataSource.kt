@@ -11,7 +11,7 @@ interface HomeLocalDataSource {
     fun getTotalNumberOfQuizzesTaken(): Flow<Int>
 
     @Query("SELECT MAX(highestStreak) FROM quizresultentity where completedTime is not null")
-    fun getLongestWinningStreak(): Flow<Int?>
+    fun getLongestStreak(): Flow<Int?>
 
     @Query("SELECT highestStreak FROM quizresultentity where completedTime is not null ORDER BY completedTime DESC LIMIT 1")
     fun getLastQuizStreak(): Flow<Int?>

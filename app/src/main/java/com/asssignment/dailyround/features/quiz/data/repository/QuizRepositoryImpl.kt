@@ -55,4 +55,13 @@ class QuizRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun exitQuiz(quizResult: QuizResultEntity) : Result<Unit>{
+        return try {
+            localDataSource.delete(quizResult)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

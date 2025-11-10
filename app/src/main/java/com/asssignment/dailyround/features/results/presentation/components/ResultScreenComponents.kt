@@ -1,4 +1,4 @@
-package com.asssignment.dailyround.features.results.presentation
+package com.asssignment.dailyround.features.results.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

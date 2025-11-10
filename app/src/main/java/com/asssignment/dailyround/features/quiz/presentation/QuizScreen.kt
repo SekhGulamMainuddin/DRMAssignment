@@ -1,6 +1,7 @@
 package com.asssignment.dailyround.features.quiz.presentation
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -62,6 +63,7 @@ fun QuizScreen(navController: NavController, quizId: String?) {
                             quizResult.highestStreak,
                             quizResult.correctAnswered.size,
                             quizResult.skippedQuestions.size + quizResult.wrongAnswered.size + quizResult.correctAnswered.size,
+                            quizResult.skippedQuestions.size,
                         )
                     ) {
                         popUpTo(NavigationHelper.QuizRoute.routeName) {
@@ -116,6 +118,10 @@ fun QuizScreen(navController: NavController, quizId: String?) {
                 )
             }
         )
+    }
+
+    BackHandler(enabled = true) {
+        viewModel.showExitConfirmationDialog()
     }
 
     Scaffold { paddingValues ->
