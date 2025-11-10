@@ -87,14 +87,17 @@ class QuizViewModel @Inject constructor(
         quizRepository.loadPendingQuiz(id).onSuccess { quizResult ->
             quizResultEntity = quizResult
 
-            val currentQuestionIndex =
+            var currentQuestionIndex =
                 questions.indexOfFirst { it.id == quizResult.currentQuestionId }
+            if(quizResult.skippedQuestions.contains(currentQuestionIndex) || quizResult.wrongAnswered.contains(currentQuestionIndex) || quizResult.correctAnswered.contains(currentQuestionIndex)) {
+                currentQuestionIndex++
+            }
 
             _questionsProgress.clear()
             _questionsProgress.addAll(
-                questions.map { question ->
-                    if (question.id == quizResult.currentQuestionId) {
-                        return@map QuestionsProgressState.Attempting
+                questions.mapIndexed { index, question ->
+                    if (currentQuestionIndex == index) {
+                        return@mapIndexed QuestionsProgressState.Attempting
                     }
                     when {
                         quizResult.correctAnswered.contains(question.id) -> QuestionsProgressState.Correct
