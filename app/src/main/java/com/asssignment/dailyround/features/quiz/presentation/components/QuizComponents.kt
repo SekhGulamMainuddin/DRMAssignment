@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -42,6 +44,7 @@ import com.asssignment.dailyround.core.components.AppTextBodyMedium
 import com.asssignment.dailyround.core.components.AppTextBodySmall
 import com.asssignment.dailyround.core.components.PrimaryButton
 import com.asssignment.dailyround.core.components.SecondaryButton
+import com.asssignment.dailyround.core.components.isPortrait
 import com.asssignment.dailyround.core.theme.CorrectGreen
 import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuestionsProgressState
 import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuizUiState
@@ -71,7 +74,6 @@ fun MessageAndOrRetry(
             )
     }
 }
-
 @Composable
 fun QuizQuestionComponent(
     modifier: Modifier = Modifier,
@@ -79,104 +81,157 @@ fun QuizQuestionComponent(
     onOptionSelected: (Int?) -> Unit,
     onExitClicked: () -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        QuestionsResultRow(
-            questionsResults = uiState.questionsProgress,
-            modifier = Modifier.fillMaxWidth()
-        )
+    val portrait = isPortrait() // detect orientation
 
-        Text(
-            text = stringResource(
-                R.string.question,
-                uiState.currentQuestionIndex + 1,
-                uiState.totalNumberOfQuestions
-            ),
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
-
-        Text(
-            text = uiState.question.question,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
+    if (portrait) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            uiState.question.options.forEachIndexed { index, option ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(
-                                1.dp,
-                                color = if (uiState.correctOptionIndex == null) MaterialTheme.colorScheme.secondary else if (uiState.correctOptionIndex == index) CorrectGreen else Color.Red
-                            ),
-                            RoundedCornerShape(8.dp)
-                        )
-                        .clickable {
-                            if (uiState.selectedOption == null) {
-                                onOptionSelected(index)
-                            }
-                        }
-                        .padding(16.dp)
-                ) {
-                    Row {
-                        AppTextBodyMedium(modifier = Modifier.weight(1f), text = option)
-                        if (uiState.correctOptionIndex != null && uiState.selectedOption == index) {
-                            Icon(
-                                if (uiState.correctOptionIndex == index) Icons.Default.Check else Icons.Default.Close,
-                                contentDescription = if (uiState.correctOptionIndex == index) "Correct" else "Wrong",
-                                tint = if (uiState.correctOptionIndex == index) CorrectGreen else Color.Red,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            QuestionsResultRow(
+                questionsResults = uiState.questionsProgress,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Text(
+                text = stringResource(
+                    R.string.question,
+                    uiState.currentQuestionIndex + 1,
+                    uiState.totalNumberOfQuestions
+                ),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+
+            Text(
+                text = uiState.question.question,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            OptionsSection(uiState = uiState, onOptionSelected = onOptionSelected)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            ActionsSection(uiState = uiState, onOptionSelected = onOptionSelected, onExitClicked = onExitClicked)
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Column() {
-            if(uiState.correctOptionIndex != null) {
-                QuestionCountdown(questionId = uiState.question.id, isLastQuestion = uiState.currentQuestionIndex == uiState.totalNumberOfQuestions-1)
+    } else {
+        Row(
+            modifier = modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = stringResource(
+                        R.string.question,
+                        uiState.currentQuestionIndex + 1,
+                        uiState.totalNumberOfQuestions
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = uiState.question.question,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                OptionsSection(uiState = uiState, onOptionSelected = onOptionSelected)
             }
 
-            PrimaryButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                buttonText = stringResource(R.string.skip_question),
-                onClick = {
-                    if (uiState.correctOptionIndex == null) {
-                        onOptionSelected(null)
-                    }
-                },
-            )
-            SecondaryButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp, top = 8.dp),
-                buttonText = stringResource(R.string.exit_quiz),
-                onClick = onExitClicked,
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                QuestionsResultRow(
+                    questionsResults = uiState.questionsProgress,
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                )
+                ActionsSection(uiState = uiState, onOptionSelected = onOptionSelected, onExitClicked = onExitClicked)
+            }
         }
     }
 }
 
+@Composable
+private fun OptionsSection(
+    uiState: QuizUiState.QuizInProgress,
+    onOptionSelected: (Int?) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+        uiState.question.options.forEachIndexed { index, option ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        border = BorderStroke(
+                            1.dp,
+                            color = if (uiState.correctOptionIndex == null) MaterialTheme.colorScheme.secondary
+                            else if (uiState.correctOptionIndex == index) CorrectGreen
+                            else Color.Red
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable { if (uiState.selectedOption == null) onOptionSelected(index) }
+                    .padding(16.dp)
+            ) {
+                Row {
+                    AppTextBodyMedium(modifier = Modifier.weight(1f), text = option)
+                    if (uiState.correctOptionIndex != null && uiState.selectedOption == index) {
+                        Icon(
+                            imageVector = if (uiState.correctOptionIndex == index) Icons.Default.Check else Icons.Default.Close,
+                            contentDescription = null,
+                            tint = if (uiState.correctOptionIndex == index) CorrectGreen else Color.Red,
+                            modifier = Modifier.size(20.dp).align(Alignment.CenterVertically).padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActionsSection(
+    uiState: QuizUiState.QuizInProgress,
+    onOptionSelected: (Int?) -> Unit,
+    onExitClicked: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        if (uiState.correctOptionIndex != null) {
+            QuestionCountdown(
+                questionId = uiState.question.id,
+                isLastQuestion = uiState.currentQuestionIndex == uiState.totalNumberOfQuestions - 1
+            )
+        }
+
+        PrimaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            buttonText = stringResource(R.string.skip_question),
+            onClick = { if (uiState.correctOptionIndex == null) onOptionSelected(null) }
+        )
+        SecondaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp, top = 8.dp),
+            buttonText = stringResource(R.string.exit_quiz),
+            onClick = onExitClicked
+        )
+    }
+}
 
 @Composable
 fun QuestionsResultRow(
@@ -264,10 +319,16 @@ fun QuestionCountdown(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .padding(bottom = 14.dp),
+        modifier = modifier.padding(bottom = 14.dp)
     ) {
-        AppTextBodyMedium(text = stringResource(if(isLastQuestion) R.string.moving_to_result_screen_in_s else R.string.moving_to_next_question_in_s, timeLeft.toInt()), modifier = Modifier.padding(bottom = 10.dp))
+        AppTextBodyMedium(
+            text = stringResource(
+                if (isLastQuestion) R.string.moving_to_result_screen_in_s
+                else R.string.moving_to_next_question_in_s,
+                timeLeft.toInt()
+            ),
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
         LinearProgressIndicator(
             progress = { progress },
             modifier = Modifier

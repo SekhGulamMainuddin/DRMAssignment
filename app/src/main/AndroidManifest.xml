@@ -17,8 +17,7 @@
             android:name=".core.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.DailyRoundAsssignment"
-            android:screenOrientation="portrait">
+            android:theme="@style/Theme.DailyRoundAsssignment">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

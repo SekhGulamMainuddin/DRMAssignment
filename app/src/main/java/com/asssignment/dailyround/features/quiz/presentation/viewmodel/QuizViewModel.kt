@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.emptyList
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -34,6 +33,9 @@ class QuizViewModel @Inject constructor(
     private val _questionsProgress = mutableListOf<QuestionsProgressState>()
 
     fun getQuizQuestions() = viewModelScope.launch(Dispatchers.IO) {
+        if(questions.isNotEmpty()) {
+            return@launch
+        }
         quizUiState.value = QuizUiState.Loading
 
         quizRepository.getQuizQuestions().onSuccess {

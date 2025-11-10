@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,6 +25,7 @@ import com.asssignment.dailyround.R
 import com.asssignment.dailyround.core.components.AppTextBodySmall
 import com.asssignment.dailyround.core.components.PrimaryButton
 import com.asssignment.dailyround.core.components.SecondaryButton
+import com.asssignment.dailyround.core.components.isPortrait
 import com.asssignment.dailyround.core.navigation.NavigationHelper
 import com.asssignment.dailyround.core.theme.CorrectGreen
 import com.asssignment.dailyround.core.theme.DailyRoundAsssignmentTheme
@@ -32,7 +35,6 @@ import com.asssignment.dailyround.features.home.presentation.viewmodel.HomeViewM
 
 @Composable
 fun HomeScreen(navController: NavController) {
-
     val viewModel = hiltViewModel<HomeViewModel>()
 
     val totalNumbersOfQuizTaken by viewModel.totalNumbersOfQuizTaken.collectAsStateWithLifecycle()
@@ -40,70 +42,78 @@ fun HomeScreen(navController: NavController) {
     val lastQuizStreak by viewModel.lastQuizStreak.collectAsStateWithLifecycle()
     val lastQuizResult by viewModel.lastQuizResult.collectAsStateWithLifecycle()
 
+    val portrait = isPortrait()
+
     Scaffold(
-        content = {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .padding(top = 50.dp)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(space = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+        content = { paddingValues ->
+            if (portrait) {
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(top = 50.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    HighlightsBox(
-                        modifier = Modifier.weight(1f),
-                        color = MaterialTheme.colorScheme.primary,
-                        value = stringResource(
-                            R.string.total_tests,
-                            formatArgs = arrayOf(totalNumbersOfQuizTaken),
-                        ),
+                    HighlightsSection(totalNumbersOfQuizTaken, longestStreak, lastQuizStreak)
+
+                    HomeLottieAnim(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(2f)
+                            .padding(vertical = 16.dp)
                     )
+
+                    lastQuizResult?.let {
+                        AppTextBodySmall(
+                            modifier = Modifier.padding(top = 20.dp),
+                            text = stringResource(R.string.incomplete_quiz_message)
+                        )
+                        SecondaryButton(
+                            buttonText = "Continue Last Quiz",
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id))
+                        }
+                    } ?: Spacer(modifier = Modifier.height(70.dp))
                 }
+            } else {
+                // Landscape: Row layout
                 Row(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(15.dp)
-                ) {
-                    HighlightsBox(
-                        modifier = Modifier.weight(1f),
-                        color = CorrectGreen,
-                        value = stringResource(
-                            R.string.longest_streak,
-                            formatArgs = arrayOf(longestStreak),
-                        ),
-                    )
-                    HighlightsBox(
-                        modifier = Modifier.weight(1f),
-                        color = MaterialTheme.colorScheme.onBackground,
-
-                        value = stringResource(
-                            R.string.last_streak,
-                            formatArgs = arrayOf(lastQuizStreak),
-                        ),
-                    )
-                }
-
-                HomeLottieAnim(
-                    Modifier
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
-                        .weight(2f)
-                )
-
-                if (lastQuizResult != null) {
-                    AppTextBodySmall(
-                        modifier = Modifier.padding(top = 20.dp),
-                        text = stringResource(R.string.incomplete_quiz_message),
-                    )
-                    SecondaryButton(
-                        buttonText = "Continue Last Quiz",
-                        modifier = Modifier.fillMaxWidth(),
+                        .fillMaxHeight(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
                     ) {
-                        navController.navigate(NavigationHelper.QuizRoute.createRoute(lastQuizResult!!.id))
+                        HighlightsSection(totalNumbersOfQuizTaken, longestStreak, lastQuizStreak)
+
+                        lastQuizResult?.let {
+                            AppTextBodySmall(
+                                text = stringResource(R.string.incomplete_quiz_message)
+                            )
+                            SecondaryButton(
+                                buttonText = "Continue Last Quiz",
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id))
+                            }
+                        }
                     }
-                } else {
-                    Spacer(modifier = Modifier.padding(top = 70.dp))
+
+                    HomeLottieAnim(
+                        modifier = Modifier
+                            .weight(2f)
+                            .fillMaxHeight()
+                            .padding(vertical = 16.dp)
+                    )
                 }
             }
         },
@@ -114,13 +124,51 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
-            )
-            {
+            ) {
                 navController.navigate(NavigationHelper.QuizRoute.createRoute(null))
             }
         }
     )
 }
+
+@Composable
+private fun HighlightsSection(
+    totalNumbersOfQuizTaken: Int,
+    longestStreak: Int,
+    lastQuizStreak: Int
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+            HighlightsBox(
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.primary,
+                value = stringResource(
+                    R.string.total_tests,
+                    formatArgs = arrayOf(totalNumbersOfQuizTaken)
+                )
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+            HighlightsBox(
+                modifier = Modifier.weight(1f),
+                color = CorrectGreen,
+                value = stringResource(
+                    R.string.longest_streak,
+                    formatArgs = arrayOf(longestStreak)
+                )
+            )
+            HighlightsBox(
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onBackground,
+                value = stringResource(
+                    R.string.last_streak,
+                    formatArgs = arrayOf(lastQuizStreak)
+                )
+            )
+        }
+    }
+}
+
 
 @Preview
 @Composable
