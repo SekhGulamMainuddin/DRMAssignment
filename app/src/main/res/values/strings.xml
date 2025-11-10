@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name">DailyRound Asssignment</string>
+    <string name="app_name">Daily Round Quiz</string>
+    <string name="total_tests">"Total Tests : %1$d"</string>
+    <string name="last_streak">"Last Quiz Streak : %1$d"</string>
+    <string name="longest_streak">"Longest Streak : %1$d"</string>
+    <string name="total_wins">"Total Wins : %1$d"</string>
+    <string name="start_new_quiz">Start New Quiz</string>
+    <string name="incomplete_quiz_message">Last Quiz was incomplete. Complete it to maintain your streak!</string>
+    <string name="submit">Submit</string>
+    <string name="exit">Exit</string>
+    <string name="retry">Retry</string>
+    <string name="questions_loaded_successfully">Questions Loaded Successfully</string>
+    <string name="exit_quiz">Exit Quiz</string>
+    <string name="question">Question %1$d / %2$d</string>
+    <string name="are_you_sure_you_want_to_exit_the_quiz">Are you sure you want to exit the quiz?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="restart_quiz">Restart Quiz</string>
+    <string name="quiz_results">Quiz Results</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="you_ve_completed_the_quiz_here_s_your_performance_summary">You\'ve completed the quiz. Here\'s your performance summary:</string>
+    <string name="correct_answers">Correct Answers</string>
+    <string name="skip_question">Skip Question</string>
 </resources>

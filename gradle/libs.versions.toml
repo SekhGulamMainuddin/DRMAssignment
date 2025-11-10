@@ -10,11 +10,13 @@ activityCompose = "1.10.0"
 composeBom = "2025.02.00"
 navigationCompose = "2.8.7"
 firebasePluginVersion = "4.4.2"
-daggerHilt = "2.51.1"
+daggerHilt = "2.53.1"
 retrofit = "2.9.0"
 roomDb = "2.8.3"
 okhttp = "4.11.0"
-
+lottieCompose = "6.1.0"
+hiltNavigationCompose = "1.3.0"
+systemUiControllerVersion = "0.32.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +42,9 @@ converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", ve
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomDb"}
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomDb"}
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomDb"}
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+system-ui-controller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "systemUiControllerVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

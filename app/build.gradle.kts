@@ -48,6 +48,11 @@ android {
 }
 
 dependencies {
+    implementation(libs.system.ui.controller)
+    implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.lottie.compose)
+
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.hilt.compiler)
 
