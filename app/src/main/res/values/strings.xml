@@ -21,4 +21,6 @@
     <string name="you_ve_completed_the_quiz_here_s_your_performance_summary">You\'ve completed the quiz. Here\'s your performance summary:</string>
     <string name="correct_answers">Correct Answers</string>
     <string name="skip_question">Skip Question</string>
+    <string name="moving_to_next_question_in_s">Moving to next question in %1$d s</string>
+    <string name="moving_to_result_screen_in_s">Moving to result screen in %1$d s</string>
 </resources>

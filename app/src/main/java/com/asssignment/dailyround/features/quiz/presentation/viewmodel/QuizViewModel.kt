@@ -170,7 +170,9 @@ class QuizViewModel @Inject constructor(
                     selectedOption = optionIndex,
                 )
 
-                delay(2000)
+                if (optionIndex != null) {
+                    delay(2000)
+                }
 
                 if (currentQuestionIndex == questions.lastIndex) {
                     quizDialogUiState.value = QuizDialogUiState.QuizCompleted(newQuizResult)
@@ -183,7 +185,8 @@ class QuizViewModel @Inject constructor(
                         totalNumberOfQuestions = questions.size,
                         questionsProgress = newQuestionProgressList
                     )
-                    newQuestionProgressList[currentQuestionIndex + 1] = QuestionsProgressState.Attempting
+                    newQuestionProgressList[currentQuestionIndex + 1] =
+                        QuestionsProgressState.Attempting
                 }
                 quizResultEntity = newQuizResult
                 _questionsProgress.clear()

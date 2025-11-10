@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -16,11 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import com.asssignment.dailyround.R
 import com.asssignment.dailyround.core.components.AppTextBodySmall
 import com.asssignment.dailyround.core.components.AppTextTitleSmall
@@ -47,7 +44,7 @@ fun QuizScreen(navController: NavController, quizId: String?) {
         viewModel.getQuizQuestions()
     }
 
-    if (dialogState !is QuizDialogUiState.Hidden && dialogState !is QuizDialogUiState.QuizQuestionSubmitting && dialogState !is QuizDialogUiState.ExitConfirmation) {
+    if (dialogState !is QuizDialogUiState.Hidden && dialogState !is QuizDialogUiState.ExitConfirmation) {
         LaunchedEffect(dialogState) {
             when (dialogState) {
                 is QuizDialogUiState.QuestionsLoaded -> {
@@ -56,7 +53,6 @@ fun QuizScreen(navController: NavController, quizId: String?) {
                     } else {
                         viewModel.startNewQuiz()
                     }
-
                 }
 
                 is QuizDialogUiState.QuizCompleted -> {
@@ -89,14 +85,6 @@ fun QuizScreen(navController: NavController, quizId: String?) {
 
                 else -> {}
             }
-        }
-    } else if (dialogState is QuizDialogUiState.QuizQuestionSubmitting) {
-        Dialog(
-            onDismissRequest = { viewModel.hideDialog() }
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(40.dp)
-            )
         }
     } else if (dialogState is QuizDialogUiState.ExitConfirmation) {
         AlertDialog(

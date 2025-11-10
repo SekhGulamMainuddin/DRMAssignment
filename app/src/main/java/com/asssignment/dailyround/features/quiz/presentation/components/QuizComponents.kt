@@ -1,7 +1,5 @@
 package com.asssignment.dailyround.features.quiz.presentation.components
 
-import android.R.attr.contentDescription
-import android.R.attr.tint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -22,9 +21,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +45,7 @@ import com.asssignment.dailyround.core.components.SecondaryButton
 import com.asssignment.dailyround.core.theme.CorrectGreen
 import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuestionsProgressState
 import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuizUiState
+import kotlinx.coroutines.delay
 
 @Composable
 fun MessageAndOrRetry(
@@ -112,7 +118,7 @@ fun QuizQuestionComponent(
                         .border(
                             border = BorderStroke(
                                 1.dp,
-                                color = if(uiState.correctOptionIndex == null) MaterialTheme.colorScheme.secondary else if(uiState.correctOptionIndex == index) CorrectGreen else Color.Red
+                                color = if (uiState.correctOptionIndex == null) MaterialTheme.colorScheme.secondary else if (uiState.correctOptionIndex == index) CorrectGreen else Color.Red
                             ),
                             RoundedCornerShape(8.dp)
                         )
@@ -124,13 +130,14 @@ fun QuizQuestionComponent(
                         .padding(16.dp)
                 ) {
                     Row {
-                        AppTextBodyMedium(text = option)
-                        if(uiState.correctOptionIndex != null && uiState.selectedOption == index) {
-                            Icon(if(uiState.correctOptionIndex == index) Icons.Default.Check else Icons.Default.Close,
-                                contentDescription = if(uiState.correctOptionIndex == index) "Correct" else "Wrong",
-                                tint = if(uiState.correctOptionIndex == index) CorrectGreen else Color.Red,
+                        AppTextBodyMedium(modifier = Modifier.weight(1f), text = option)
+                        if (uiState.correctOptionIndex != null && uiState.selectedOption == index) {
+                            Icon(
+                                if (uiState.correctOptionIndex == index) Icons.Default.Check else Icons.Default.Close,
+                                contentDescription = if (uiState.correctOptionIndex == index) "Correct" else "Wrong",
+                                tint = if (uiState.correctOptionIndex == index) CorrectGreen else Color.Red,
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(20.dp)
                                     .align(Alignment.CenterVertically)
                                     .padding(start = 8.dp)
                             )
@@ -141,14 +148,21 @@ fun QuizQuestionComponent(
         }
 
         Spacer(modifier = Modifier.weight(1f))
+
         Column() {
+            if(uiState.correctOptionIndex != null) {
+                QuestionCountdown(questionId = uiState.question.id, isLastQuestion = uiState.currentQuestionIndex == uiState.totalNumberOfQuestions-1)
+            }
+
             PrimaryButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 buttonText = stringResource(R.string.skip_question),
                 onClick = {
-                    onOptionSelected(null)
+                    if (uiState.correctOptionIndex == null) {
+                        onOptionSelected(null)
+                    }
                 },
             )
             SecondaryButton(
@@ -225,5 +239,40 @@ fun QuestionsResultRow(
                 }
             }
         }
+    }
+}
+@Composable
+fun QuestionCountdown(
+    modifier: Modifier = Modifier,
+    questionId: Int,
+    isLastQuestion: Boolean,
+    totalTime: Int = 2,
+) {
+    var timeLeft by remember { mutableStateOf(totalTime.toFloat()) }
+
+    LaunchedEffect(key1 = questionId) {
+        timeLeft = totalTime.toFloat()
+        while (timeLeft > 0f) {
+            delay(500)
+            timeLeft -= 0.5f
+        }
+        timeLeft = 0f
+    }
+
+    val progress = timeLeft / totalTime.toFloat()
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .padding(bottom = 14.dp),
+    ) {
+        AppTextBodyMedium(text = stringResource(if(isLastQuestion) R.string.moving_to_result_screen_in_s else R.string.moving_to_next_question_in_s, timeLeft.toInt()), modifier = Modifier.padding(bottom = 10.dp))
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+        )
     }
 }
