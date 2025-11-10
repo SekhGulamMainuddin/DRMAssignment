@@ -200,7 +200,11 @@ class QuizViewModel @Inject constructor(
         }
 
     fun showExitConfirmationDialog() {
-        quizDialogUiState.value = QuizDialogUiState.ExitConfirmation
+        if(questions.isEmpty()) {
+            quizDialogUiState.value = QuizDialogUiState.ExitScreen
+        } else {
+            quizDialogUiState.value = QuizDialogUiState.ExitConfirmation
+        }
     }
 
     fun exitQuiz() = viewModelScope.launch(Dispatchers.IO) {
