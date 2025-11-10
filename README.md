@@ -8,7 +8,7 @@ Please install assignment-app.apk for experiencing the app. Its present in the r
 5. Implemented Dependency Injection using Hilt.
 6. Used Compose UI
 
-# Folder Structure
+# Folder Structure (Please open this in Android Studio Directly)
 app/src/main/java/com.assignment.dailyround
 ├── core // It includes the MainActivity and Application Class as well
 │   ├── components // Common Compose UI components
