@@ -4,17 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,7 +19,6 @@ import com.asssignment.dailyround.core.theme.DailyRoundAsssignmentTheme
 import com.asssignment.dailyround.features.home.presentation.HomeScreen
 import com.asssignment.dailyround.features.quiz.presentation.QuizScreen
 import com.asssignment.dailyround.features.results.presentation.ResultsScreen
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,8 +28,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DailyRoundAsssignmentTheme {
-                SetSystemBars()
-
                 val navController = rememberNavController()
                 NavHost(
                     modifier = Modifier
@@ -95,18 +86,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun SetSystemBars() {
-    val systemUiController = rememberSystemUiController()
-    val darkTheme = isSystemInDarkTheme()
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = if (darkTheme) Color.Black else Color.White,
-            darkIcons = !darkTheme // true for light theme, false for dark theme
-        )
     }
 }
