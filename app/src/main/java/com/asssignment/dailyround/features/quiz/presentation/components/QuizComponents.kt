@@ -169,7 +169,9 @@ private fun OptionsSection(
     onOptionSelected: (Int?) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-        uiState.question.options.forEachIndexed { index, option ->
+        uiState.question.options.filter {
+            it != null
+        }.forEachIndexed { index, option ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -186,7 +188,7 @@ private fun OptionsSection(
                     .padding(16.dp)
             ) {
                 Row {
-                    AppTextBodyMedium(modifier = Modifier.weight(1f), text = option)
+                    AppTextBodyMedium(modifier = Modifier.weight(1f), text = option.toString())
                     if (uiState.correctOptionIndex != null && uiState.selectedOption == index) {
                         Icon(
                             imageVector = if (uiState.correctOptionIndex == index) Icons.Default.Check else Icons.Default.Close,
