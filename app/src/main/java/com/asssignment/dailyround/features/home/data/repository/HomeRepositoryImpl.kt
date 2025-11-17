@@ -13,14 +13,14 @@ class HomeRepositoryImpl @Inject constructor(
     private val localDataSource: HomeLocalDataSource
 ) : HomeRepository {
 
-    override fun getTotalNumberOfQuizzesTaken(): Flow<Int> =
-        localDataSource.getTotalNumberOfQuizzesTaken()
+    override fun getTotalNumberOfQuizzesTaken(moduleId: String): Flow<Int> =
+        localDataSource.getTotalNumberOfQuizzesTaken(moduleId)
 
-    override fun getLongestStreak(): Flow<Int> =
-        localDataSource.getLongestStreak().map { it ?: 0 }
+    override fun getLongestStreak(moduleId: String): Flow<Int> =
+        localDataSource.getLongestStreak(moduleId).map { it ?: 0 }
 
-    override fun getLastQuizStreak(): Flow<Int> =
-        localDataSource.getLastQuizStreak().map { it ?: 0 }
+    override fun getLastQuizStreak(moduleId: String): Flow<Int> =
+        localDataSource.getLastQuizStreak(moduleId).map { it ?: 0 }
 
-    override fun getLastQuizResult(): Flow<QuizResultEntity?> = localDataSource.getLastQuizResult()
+    override fun getLastQuizResult(moduleId: String): Flow<QuizResultEntity?> = localDataSource.getLastQuizResult(moduleId)
 }

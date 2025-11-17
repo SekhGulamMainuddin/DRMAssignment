@@ -1,6 +1,5 @@
 package com.asssignment.dailyround.features.quiz.presentation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -33,7 +32,7 @@ import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuizUiSta
 import com.asssignment.dailyround.features.quiz.presentation.viewmodel.QuizViewModel
 
 @Composable
-fun QuizScreen(navController: NavController, quizId: String?) {
+fun QuizScreen(navController: NavController, quizId: String?, moduleId: String, questionUrl: String) {
     val viewModel = hiltViewModel<QuizViewModel>()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -42,7 +41,7 @@ fun QuizScreen(navController: NavController, quizId: String?) {
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.getQuizQuestions()
+        viewModel.getQuizQuestions(moduleId, questionUrl)
     }
 
     if (dialogState !is QuizDialogUiState.Hidden && dialogState !is QuizDialogUiState.ExitConfirmation) {
@@ -64,6 +63,7 @@ fun QuizScreen(navController: NavController, quizId: String?) {
                             quizResult.correctAnswered.size,
                             quizResult.skippedQuestions.size + quizResult.wrongAnswered.size + quizResult.correctAnswered.size,
                             quizResult.skippedQuestions.size,
+                            moduleId
                         )
                     ) {
                         popUpTo(NavigationHelper.QuizRoute.routeName) {
@@ -131,7 +131,7 @@ fun QuizScreen(navController: NavController, quizId: String?) {
                     .padding(paddingValues),
                 message = (uiState as QuizUiState.QuestionsLoadError).message,
             ) {
-                viewModel.getQuizQuestions()
+                viewModel.getQuizQuestions(moduleId, questionUrl)
             }
 
             is QuizUiState.QuizStartError -> MessageAndOrRetry(

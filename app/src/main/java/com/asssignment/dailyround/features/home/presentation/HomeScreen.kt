@@ -34,9 +34,12 @@ import com.asssignment.dailyround.features.home.presentation.components.HomeLott
 import com.asssignment.dailyround.features.home.presentation.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    val viewModel = hiltViewModel<HomeViewModel>()
-
+fun ModuleHomeScreen(navController: NavController, moduleId: String, questionUrl: String) {
+    val viewModel: HomeViewModel = hiltViewModel(
+        creationCallback = { factory: HomeViewModel.Factory ->
+            factory.create(moduleId)
+        }
+    )
     val totalNumbersOfQuizTaken by viewModel.totalNumbersOfQuizTaken.collectAsStateWithLifecycle()
     val longestStreak by viewModel.longestStreak.collectAsStateWithLifecycle()
     val lastQuizStreak by viewModel.lastQuizStreak.collectAsStateWithLifecycle()
@@ -73,7 +76,7 @@ fun HomeScreen(navController: NavController) {
                             buttonText = "Continue Last Quiz",
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id))
+                            navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id, moduleId, questionUrl))
                         }
                     } ?: Spacer(modifier = Modifier.height(70.dp))
                 }
@@ -103,7 +106,7 @@ fun HomeScreen(navController: NavController) {
                                 buttonText = "Continue Last Quiz",
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
-                                navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id))
+                                navController.navigate(NavigationHelper.QuizRoute.createRoute(it.id, moduleId, questionUrl))
                             }
                         }
                     }
@@ -125,7 +128,7 @@ fun HomeScreen(navController: NavController) {
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
             ) {
-                navController.navigate(NavigationHelper.QuizRoute.createRoute(null))
+                navController.navigate(NavigationHelper.QuizRoute.createRoute(null, moduleId, questionUrl))
             }
         }
     )
@@ -166,23 +169,5 @@ private fun HighlightsSection(
                 )
             )
         }
-    }
-}
-
-
-@Preview
-@Composable
-private fun HomeScreenLight() {
-    DailyRoundAsssignmentTheme(darkTheme = false) {
-        HomeScreen(navController = rememberNavController())
-    }
-}
-
-
-@Preview
-@Composable
-private fun HomeScreenDark() {
-    DailyRoundAsssignmentTheme(darkTheme = true) {
-        HomeScreen(navController = rememberNavController())
     }
 }

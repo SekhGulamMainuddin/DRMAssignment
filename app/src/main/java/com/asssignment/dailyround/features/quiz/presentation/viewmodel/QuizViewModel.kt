@@ -1,5 +1,6 @@
 package com.asssignment.dailyround.features.quiz.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asssignment.dailyround.features.quiz.data.entities.QuizResultEntity
@@ -32,13 +33,17 @@ class QuizViewModel @Inject constructor(
 
     private val _questionsProgress = mutableListOf<QuestionsProgressState>()
 
-    fun getQuizQuestions() = viewModelScope.launch(Dispatchers.IO) {
+    var currentModuleId: String = ""
+
+    fun getQuizQuestions(moduleId: String, questionUrl: String) = viewModelScope.launch(Dispatchers.IO) {
         if(questions.isNotEmpty()) {
             return@launch
         }
+        currentModuleId = moduleId
+
         quizUiState.value = QuizUiState.Loading
 
-        quizRepository.getQuizQuestions().onSuccess {
+        quizRepository.getQuizQuestions(questionUrl).onSuccess {
             questions.clear()
             questions.addAll(it)
             _questionsProgress.clear()
@@ -67,6 +72,7 @@ class QuizViewModel @Inject constructor(
             completedTime = null,
             skippedQuestions = emptyList(),
             highestStreak = 0,
+            moduleId = currentModuleId
         )
 
         quizResultEntity = newQuiz
@@ -212,7 +218,6 @@ class QuizViewModel @Inject constructor(
     fun exitQuiz() = viewModelScope.launch(Dispatchers.IO) {
         quizDialogUiState.value = QuizDialogUiState.Hidden
         quizUiState.value = QuizUiState.Loading
-        quizRepository.exitQuiz(quizResultEntity)
         quizDialogUiState.value = QuizDialogUiState.ExitScreen
     }
 

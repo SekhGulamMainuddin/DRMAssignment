@@ -1,6 +1,8 @@
 package com.asssignment.dailyround.core
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.asssignment.dailyround.core.navigation.NavigationHelper
 import com.asssignment.dailyround.core.theme.DailyRoundAsssignmentTheme
-import com.asssignment.dailyround.features.home.presentation.HomeScreen
+import com.asssignment.dailyround.features.home.presentation.ModuleHomeScreen
+import com.asssignment.dailyround.features.module_section.presentation.ModuleScreen
 import com.asssignment.dailyround.features.quiz.presentation.QuizScreen
 import com.asssignment.dailyround.features.results.presentation.ResultsScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,12 +37,30 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.systemBars),
                     navController = navController,
-                    startDestination = NavigationHelper.HomeRoute.routeName,
+                    startDestination = NavigationHelper.ModuleListRoute.routeName,
                 ) {
                     composable(
-                        route = NavigationHelper.HomeRoute.routeName
+                        route = NavigationHelper.ModuleListRoute.routeName
                     ) {
-                        HomeScreen(navController)
+                        ModuleScreen(navController)
+                    }
+
+                    composable(
+                        route = NavigationHelper.HomeRoute.routeName,
+                        arguments = listOf(
+                            navArgument("moduleId") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                            navArgument("questionUrl") {
+                                type = NavType.StringType
+                                nullable = false
+                            }
+                        )
+                    ) {
+                        val questionUrl = it.arguments?.getString("questionUrl").let {i-> Uri.decode(i) }
+
+                        ModuleHomeScreen(navController, it.arguments?.getString("moduleId").orEmpty(), questionUrl)
                     }
                     composable(
                         route = NavigationHelper.QuizRoute.routeName,
@@ -48,11 +69,20 @@ class MainActivity : ComponentActivity() {
                                 type = NavType.StringType
                                 nullable = true
                                 defaultValue = null
+                            },
+                            navArgument("questionUrl") {
+                                type = NavType.StringType
+                                nullable = false
                             }
                         )
                     ) { backStackEntry ->
                         val quizId = backStackEntry.arguments?.getString("quizId")
-                        QuizScreen(navController, quizId)
+                        val moduleId = backStackEntry.arguments?.getString("moduleId").orEmpty()
+                        val questionUrl = backStackEntry.arguments?.getString("questionUrl").let {i-> Uri.decode(i) }
+
+                        Log.d("SEKH BRO", "onCreate: $questionUrl")
+
+                        QuizScreen(navController, quizId, moduleId, questionUrl)
                     }
                     composable(
                         route = NavigationHelper.ResultsRoute.routeName,
@@ -79,13 +109,15 @@ class MainActivity : ComponentActivity() {
                         val correctAns = backStackEntry.arguments?.getInt("correctAns") ?: 0
                         val totalQuestions = backStackEntry.arguments?.getInt("totalQuestions") ?: 0
                         val skippedQuestions = backStackEntry.arguments?.getInt("skippedQuestions") ?: 0
+                        val moduleId = backStackEntry.arguments?.getString("moduleId").orEmpty()
 
                         ResultsScreen(
                             navController = navController,
                             highestStreak = highestStreak,
                             correctAns = correctAns,
                             totalQuestions = totalQuestions,
-                            skippedQuestions = skippedQuestions
+                            skippedQuestions = skippedQuestions,
+                            moduleId = moduleId
                         )
                     }
 

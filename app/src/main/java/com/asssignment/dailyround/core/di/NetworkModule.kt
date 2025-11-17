@@ -1,6 +1,7 @@
 package com.asssignment.dailyround.core.di
 
 import com.asssignment.dailyround.core.constants.Constants.BASE_URL
+import com.asssignment.dailyround.features.module_section.data.datasource.ModuleRemoteDataSource
 import com.asssignment.dailyround.features.quiz.data.datasource.QuizRemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitInstance() = Retrofit.Builder()
+    fun provideRetrofitInstance(): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(
             GsonConverterFactory.create()
@@ -26,7 +27,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideQuizRemoteService(retrofit: Retrofit): QuizRemoteDataSource {
+    fun provideQuizRemoteDataSource(retrofit: Retrofit): QuizRemoteDataSource {
         return retrofit.create(QuizRemoteDataSource::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideModuleRemoteDataSource(retrofit: Retrofit) : ModuleRemoteDataSource {
+        return retrofit.create(ModuleRemoteDataSource::class.java)
     }
 }

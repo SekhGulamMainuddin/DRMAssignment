@@ -15,4 +15,5 @@ data class QuizResultEntity(
     val highestStreak: Int,
     val completedTime : Long? = null,
     val lastUpdatedTime : Long = System.currentTimeMillis(),
+    val moduleId: String,
 )

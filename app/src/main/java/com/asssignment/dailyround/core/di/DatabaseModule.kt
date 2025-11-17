@@ -2,6 +2,8 @@ package com.asssignment.dailyround.core.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.asssignment.dailyround.core.local_db.LocalDatabase
 import dagger.Module
 import dagger.Provides
@@ -20,6 +22,14 @@ object DatabaseModule {
         context,
         LocalDatabase::class.java,
         "daily_round_db",
+    ).addMigrations(
+        object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE QuizResultEntity ADD COLUMN moduleId TEXT NOT NULL DEFAULT ''"
+                )
+            }
+        }
     ).build()
 
     @Provides
@@ -29,4 +39,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideQuizLocalDataSource(db: LocalDatabase) = db.getQuizLocalDataSource()
+
+    @Provides
+    @Singleton
+    fun provideModuleLocalDataSource(db: LocalDatabase) = db.getModuleLocalDataSource()
 }

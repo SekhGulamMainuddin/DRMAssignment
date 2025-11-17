@@ -32,6 +32,7 @@ import com.asssignment.dailyround.core.components.AppTextTitleMedium
 import com.asssignment.dailyround.core.components.PrimaryButton
 import com.asssignment.dailyround.core.navigation.NavigationHelper
 import com.asssignment.dailyround.core.theme.DailyRoundAsssignmentTheme
+import com.asssignment.dailyround.features.home.presentation.viewmodel.HomeViewModel
 import com.asssignment.dailyround.features.results.presentation.components.SummaryComponent
 import com.asssignment.dailyround.features.results.presentation.viewmodel.ResultsViewModel
 
@@ -39,13 +40,17 @@ import com.asssignment.dailyround.features.results.presentation.viewmodel.Result
 @Composable
 fun ResultsScreen(
     navController: NavController,
+    moduleId: String,
     highestStreak: Int,
     correctAns: Int,
     totalQuestions: Int,
     skippedQuestions: Int,
 ) {
-    val viewModel = hiltViewModel<ResultsViewModel>()
-
+    val viewModel: ResultsViewModel = hiltViewModel(
+        creationCallback = { factory: ResultsViewModel.Factory ->
+            factory.create(moduleId)
+        }
+    )
     val longestStreak by viewModel.highestStream.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -56,7 +61,7 @@ fun ResultsScreen(
                     IconButton(
                         onClick = {
                             navController.popBackStack(
-                                NavigationHelper.HomeRoute.routeName,
+                                NavigationHelper.ModuleListRoute.routeName,
                                 inclusive = false
                             )
                         }
@@ -111,34 +116,6 @@ fun ResultsScreen(
                     value = longestStreak.toString()
                 )
             }
-
-            PrimaryButton(
-                buttonText = stringResource(R.string.restart_quiz),
-                onClick = {
-                    navController.navigate(
-                        NavigationHelper.QuizRoute.createRoute(null)
-                    ) {
-                        popUpTo(NavigationHelper.ResultsRoute.routeName) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                }
-            )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun ResultsScreenPreview() {
-    DailyRoundAsssignmentTheme {
-        ResultsScreen(
-            navController = rememberNavController(),
-            highestStreak = 5,
-            correctAns = 8,
-            totalQuestions = 10,
-            skippedQuestions = 2,
-        )
     }
 }

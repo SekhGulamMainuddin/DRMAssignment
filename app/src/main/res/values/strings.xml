@@ -26,4 +26,5 @@
     <string name="current_quiz_highest_streak">Current Quiz Highest Streak</string>
     <string name="skipped_questions">Skipped Questions</string>
     <string name="highest_streak">Highest Streak</string>
+    <string name="modules">Modules</string>
 </resources>
