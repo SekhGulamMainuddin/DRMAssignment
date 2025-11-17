@@ -3,6 +3,8 @@ package com.asssignment.dailyround.core.di
 import com.asssignment.dailyround.core.constants.Constants.BASE_URL
 import com.asssignment.dailyround.features.module_section.data.datasource.ModuleRemoteDataSource
 import com.asssignment.dailyround.features.quiz.data.datasource.QuizRemoteDataSource
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,12 +20,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitInstance(): Retrofit = Retrofit.Builder()
+    fun provideRetrofitInstance(gson: Gson): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(
-            GsonConverterFactory.create()
+            GsonConverterFactory.create(gson)
         ).client(OkHttpClient())
         .build()
+
+    @Provides
+    @Singleton
+    fun provideGson() = GsonBuilder().setLenient().create()
 
     @Provides
     @Singleton
